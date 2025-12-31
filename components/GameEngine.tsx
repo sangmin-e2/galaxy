@@ -201,10 +201,14 @@ const GameEngine: React.FC<GameEngineProps> = ({
         }
 
         // Bullets
+        const beforeCount = bulletsRef.current.length;
         bulletsRef.current = bulletsRef.current.filter(b => {
           b.y -= b.speed;
           return b.y > 0;
         });
+        if (beforeCount !== bulletsRef.current.length) {
+          console.log(`🗑️ Bullets cleaned: ${beforeCount} -> ${bulletsRef.current.length}`);
+        }
 
         // Shooting probability (+10% each level)
         const shootProb = 0.002 * Math.pow(1.1, level - 1);
@@ -312,6 +316,11 @@ const GameEngine: React.FC<GameEngineProps> = ({
 
       // Drawing
       ctx.clearRect(0, 0, width, height);
+      
+      // Debug: bullets count
+      if (bulletsRef.current.length > 0) {
+        console.log(`🎨 Rendering ${bulletsRef.current.length} bullets:`, bulletsRef.current.map(b => ({x: b.x, y: b.y})));
+      }
 
       // Draw Stars
       ctx.fillStyle = 'white';
