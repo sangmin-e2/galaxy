@@ -42,7 +42,7 @@ const GameEngine: React.FC<GameEngineProps> = ({
     // Reset player position
     playerRef.current = {
       x: width / 2 - 15,
-      y: height - 120, // Move up a bit for the control area
+      y: height - 100, // Move player down a bit for more distance from enemies
       w: 30,
       h: 30,
       speed: 7
@@ -390,6 +390,7 @@ const GameEngine: React.FC<GameEngineProps> = ({
         <div className="relative -mt-4">
           <button 
             onClick={shoot}
+            onPointerDown={shoot}
             className="w-24 h-24 rounded-full bg-red-600 shadow-[0_6px_0_#991b1b,0_8px_15px_rgba(220,38,38,0.4)] border-b-4 border-red-900 active:translate-y-1 active:shadow-none transition-all flex flex-col justify-center items-center z-10"
           >
             <span className="material-symbols-outlined text-5xl text-red-100">gps_fixed</span>
