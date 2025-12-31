@@ -171,6 +171,11 @@ const GameEngine: React.FC<GameEngineProps> = ({
           playerRef.current.x += playerRef.current.speed;
         }
 
+        // Continuous Shooting
+        if (keysPressed.current['Space']) {
+          shoot();
+        }
+
         // Bullets
         bulletsRef.current = bulletsRef.current.filter(b => {
           b.y -= b.speed;
@@ -389,8 +394,12 @@ const GameEngine: React.FC<GameEngineProps> = ({
         
         <div className="relative -mt-4">
           <button 
-            onClick={shoot}
-            onPointerDown={shoot}
+            onPointerDown={() => keysPressed.current['Space'] = true}
+            onPointerUp={() => keysPressed.current['Space'] = false}
+            onPointerLeave={() => keysPressed.current['Space'] = false}
+            onTouchStart={() => keysPressed.current['Space'] = true}
+            onTouchEnd={() => keysPressed.current['Space'] = false}
+            onClick={() => keysPressed.current['Space'] = true}
             className="w-24 h-24 rounded-full bg-red-600 shadow-[0_6px_0_#991b1b,0_8px_15px_rgba(220,38,38,0.4)] border-b-4 border-red-900 active:translate-y-1 active:shadow-none transition-all flex flex-col justify-center items-center z-10"
           >
             <span className="material-symbols-outlined text-5xl text-red-100">gps_fixed</span>
