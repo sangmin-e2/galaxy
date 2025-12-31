@@ -94,6 +94,11 @@ const GameEngine: React.FC<GameEngineProps> = ({
   }, []);
 
   const shoot = useCallback(() => {
+    console.log('🔫 shoot fired', {
+      isPaused,
+      levelText: levelTextTimerRef.current,
+      transitioning: isTransitioningRef.current
+    });
     if (isPaused || levelTextTimerRef.current > 0 || isTransitioningRef.current) return;
     bulletsRef.current.push({
       x: playerRef.current.x + playerRef.current.w / 2 - 2,
@@ -382,7 +387,7 @@ const GameEngine: React.FC<GameEngineProps> = ({
         className="flex-1 w-full bg-black cursor-none"
       />
 
-      <div className="bg-zinc-950 pb-20 pt-2 px-4 flex justify-center items-center gap-6 border-t border-white/10 relative z-20">
+      <div className="bg-zinc-950 pb-20 pt-2 px-4 flex justify-center items-center gap-6 border-t border-white/10 relative z-20 pointer-events-auto">
         <button 
           onPointerDown={() => keysPressed.current['ArrowLeft'] = true}
           onPointerUp={() => keysPressed.current['ArrowLeft'] = false}
@@ -394,10 +399,13 @@ const GameEngine: React.FC<GameEngineProps> = ({
         
         <div className="relative -mt-4">
           <button 
-            onPointerDown={shoot}
-            onTouchStart={shoot}
-            onClick={shoot}
-            className="w-24 h-24 rounded-full bg-red-600 shadow-[0_6px_0_#991b1b,0_8px_15px_rgba(220,38,38,0.4)] border-b-4 border-red-900 active:translate-y-1 active:shadow-none transition-all flex flex-col justify-center items-center z-10"
+            type="button"
+            onPointerDown={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              shoot();
+            }}
+            className="w-24 h-24 rounded-full bg-red-600 shadow-[0_6px_0_#991b1b,0_8px_15px_rgba(220,38,38,0.4)] border-b-4 border-red-900 active:translate-y-1 active:shadow-none transition-all flex flex-col justify-center items-center z-10 touch-none select-none pointer-events-auto"
           >
             <span className="material-symbols-outlined text-5xl text-red-100">gps_fixed</span>
             <span className="text-[10px] text-red-200 mt-1 tracking-widest font-bold uppercase">Fire</span>
