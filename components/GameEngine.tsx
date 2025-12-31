@@ -35,6 +35,7 @@ const GameEngine: React.FC<GameEngineProps> = ({
   const isTransitioningRef = useRef(false);
   const lastShootTime = useRef(0); // 발사 쿨다운용
   const levelTextTimerRef = useRef(120); // 120 frames ~ 2 seconds
+  const shootRef = useRef<() => void>(() => {}); // shoot 함수 참조
   
   // State for UI only
   const [showLevelText, setShowLevelText] = useState(true);
@@ -96,7 +97,7 @@ const GameEngine: React.FC<GameEngineProps> = ({
 
   const shoot = useCallback(() => {
     const now = Date.now();
-    const cooldown = 150; // 150ms 쿨다운
+    const cooldown = 80; // 80ms 쿨다운 - 빠른 연사
     
     console.log('🔫 shoot fired', {
       isPaused,
@@ -127,6 +128,11 @@ const GameEngine: React.FC<GameEngineProps> = ({
     bulletsRef.current.push(bullet);
     console.log('✅ Bullet created!', bullet, 'Total bullets:', bulletsRef.current.length);
   }, [isPaused]);
+
+  // shoot 함수를 ref에 저장하여 항상 최신 버전 참조
+  useEffect(() => {
+    shootRef.current = shoot;
+  }, [shoot]);
 
   // Initial setup and Resize
   useEffect(() => {
@@ -426,25 +432,29 @@ const GameEngine: React.FC<GameEngineProps> = ({
         </button>
         
         <div className="relative -mt-4">
+          {/* glow: 클릭 절대 못 받게 */}
+          <div className="absolute inset-0 rounded-full bg-red-500/20 blur-xl -z-10 pointer-events-none"></div>
+
           <button 
             type="button"
             onPointerDown={(e) => {
               e.preventDefault();
               e.stopPropagation();
+              console.log('🎯 FIRE button onPointerDown!');
               keysPressed.current['Fire'] = true;
+              shootRef.current();
             }}
-            onPointerUp={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            onPointerUp={() => {
               keysPressed.current['Fire'] = false;
             }}
-            onPointerLeave={() => keysPressed.current['Fire'] = false}
-            className="w-24 h-24 rounded-full bg-red-600 shadow-[0_6px_0_#991b1b,0_8px_15px_rgba(220,38,38,0.4)] border-b-4 border-red-900 active:translate-y-1 active:shadow-none transition-all flex flex-col justify-center items-center z-10 touch-none select-none pointer-events-auto"
+            onPointerCancel={() => {
+              keysPressed.current['Fire'] = false;
+            }}
+            className="relative z-10 w-24 h-24 rounded-full bg-red-600 shadow-[0_6px_0_#991b1b,0_8px_15px_rgba(220,38,38,0.4)] border-b-4 border-red-900 active:translate-y-1 active:shadow-none transition-all flex flex-col justify-center items-center touch-none select-none"
           >
             <span className="material-symbols-outlined text-5xl text-red-100">gps_fixed</span>
             <span className="text-[10px] text-red-200 mt-1 tracking-widest font-bold uppercase">Fire</span>
           </button>
-          <div className="absolute inset-0 rounded-full bg-red-500/20 blur-xl -z-0"></div>
         </div>
 
         <button 
