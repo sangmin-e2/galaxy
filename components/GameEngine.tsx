@@ -377,7 +377,7 @@ const GameEngine: React.FC<GameEngineProps> = ({
         className="flex-1 w-full bg-black cursor-none"
       />
 
-      <div className="bg-zinc-950 pb-8 pt-6 px-4 flex justify-center items-center gap-6 border-t border-white/10 relative z-20">
+      <div className="bg-zinc-950 pb-20 pt-2 px-4 flex justify-center items-center gap-6 border-t border-white/10 relative z-20">
         <button 
           onPointerDown={() => keysPressed.current['ArrowLeft'] = true}
           onPointerUp={() => keysPressed.current['ArrowLeft'] = false}
