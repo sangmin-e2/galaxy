@@ -196,7 +196,7 @@ const GameEngine: React.FC<GameEngineProps> = ({
         }
 
         // Continuous Shooting
-        if (keysPressed.current['Space']) {
+        if (keysPressed.current['Space'] || keysPressed.current['Fire']) {
           shoot();
         }
 
@@ -431,8 +431,14 @@ const GameEngine: React.FC<GameEngineProps> = ({
             onPointerDown={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              shoot();
+              keysPressed.current['Fire'] = true;
             }}
+            onPointerUp={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              keysPressed.current['Fire'] = false;
+            }}
+            onPointerLeave={() => keysPressed.current['Fire'] = false}
             className="w-24 h-24 rounded-full bg-red-600 shadow-[0_6px_0_#991b1b,0_8px_15px_rgba(220,38,38,0.4)] border-b-4 border-red-900 active:translate-y-1 active:shadow-none transition-all flex flex-col justify-center items-center z-10 touch-none select-none pointer-events-auto"
           >
             <span className="material-symbols-outlined text-5xl text-red-100">gps_fixed</span>
