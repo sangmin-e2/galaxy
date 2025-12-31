@@ -33,6 +33,7 @@ const GameEngine: React.FC<GameEngineProps> = ({
   const keysPressed = useRef<Record<string, boolean>>({});
   const enemiesKilled = useRef(0);
   const isTransitioningRef = useRef(false);
+  const lastShootTime = useRef(0); // 발사 쿨다운용
   const levelTextTimerRef = useRef(120); // 120 frames ~ 2 seconds
   
   // State for UI only
@@ -94,19 +95,37 @@ const GameEngine: React.FC<GameEngineProps> = ({
   }, []);
 
   const shoot = useCallback(() => {
+    const now = Date.now();
+    const cooldown = 150; // 150ms 쿨다운
+    
     console.log('🔫 shoot fired', {
       isPaused,
       levelText: levelTextTimerRef.current,
-      transitioning: isTransitioningRef.current
+      transitioning: isTransitioningRef.current,
+      timeSinceLastShot: now - lastShootTime.current
     });
-    if (isPaused || levelTextTimerRef.current > 0 || isTransitioningRef.current) return;
-    bulletsRef.current.push({
+    
+    if (isPaused || levelTextTimerRef.current > 0 || isTransitioningRef.current) {
+      console.log('❌ Shoot blocked by condition');
+      return;
+    }
+    
+    // 쿨다운 체크
+    if (now - lastShootTime.current < cooldown) {
+      console.log('⏱️ Cooldown active');
+      return;
+    }
+    
+    lastShootTime.current = now;
+    const bullet = {
       x: playerRef.current.x + playerRef.current.w / 2 - 2,
       y: playerRef.current.y,
       w: 4,
       h: 12,
       speed: 10
-    });
+    };
+    bulletsRef.current.push(bullet);
+    console.log('✅ Bullet created!', bullet, 'Total bullets:', bulletsRef.current.length);
   }, [isPaused]);
 
   // Initial setup and Resize
